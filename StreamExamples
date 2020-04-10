@@ -1,0 +1,301 @@
+import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+
+public class StreamExample {
+
+	public static void main(String[] args) {
+		
+		//new FlatMapExample().whenFlatMapEmployeeNames_thenGetNameStream();
+		//new FlatMapExample().whenIncrementSalaryUsingPeek_thenApplyNewSalary();
+		//StramInfinite_finite();
+		//whenIncrementSalaryUsingPeek_thenApplyNewSalary();
+		//whenFindMax_thenGetMaxElementFromStream();
+		//whenApplyDistinct_thenRemoveDuplicatesFromStream();
+		//whenApplyMatch_thenReturnBoolean();
+		//whenApplyMatch_thenReturnBoolean();
+		
+		//whenFindMax_thenGetMaxElementFromStream();
+		
+		//whenApplySummarizing_thenGetBasicStats();
+		
+		whenIterateStream_thenGetInfiniteStream();
+		
+		
+		}
+
+	
+	public void whenFlatMapEmployeeNames_thenGetNameStream() {
+	    List<List<String>> namesNested = Arrays.asList( 
+	      Arrays.asList("Jeff", "Bezos"), 
+	      Arrays.asList("Bill", "Gates"), 
+	      Arrays.asList("Mark", "Zuckerberg"));
+
+	    List<String> namesFlatStream = namesNested.stream()
+	      .flatMap(Collection::stream)
+	      .collect(Collectors.toList());
+	    
+	    namesFlatStream.forEach(System.out::println);
+	    System.out.println();
+	    System.out.println("using lambda");
+	    namesFlatStream.forEach(item -> System.out.println(item));
+	    
+
+	}
+	
+	public static void whenIncrementSalaryUsingPeek_thenApplyNewSalary() {
+	    Employee[] arrayOfEmps = {
+	        new Employee(1, "Jeff Bezos", 100000.0), 
+	        new Employee(2, "Bill Gates", 200000.0), 
+	        new Employee(3, "Mark Zuckerberg", 3100000.0),
+	        new Employee(4,"Austin Martin",400000.0)
+	    };
+
+	    List<Employee> empList = Arrays.asList(arrayOfEmps);
+	    
+	   /* empList.stream()
+	      .peek(e -> e.salaryIncrement(10.0))
+	      .peek(System.out::println)
+	      .collect(Collectors.toList());*/
+	    
+	    String employees = empList.stream()
+	    	      .sorted((e1, e2) -> e1.getName().compareTo(e2.getName()))
+	    	      .findFirst().get().toString();
+	    
+	    Employee maxSalEmp = empList.stream()
+	    	      .max(Comparator.comparing(Employee::getSalary))
+	    	      .orElseThrow(NoSuchElementException::new);
+	    
+	    
+	    
+	    System.out.println(employees);
+	    System.out.println(maxSalEmp);
+	    
+	    
+	   
+	}
+	
+	public static void StramInfinite_finite()
+	{
+		Stream<Integer> infiniteStream = Stream.iterate(10000, i -> i / 2);
+
+	    List<Integer> collect = infiniteStream
+	      .skip(3)
+	      .limit(5)
+	      .collect(Collectors.toList());
+	    
+	    System.out.println("StramInfinite_finite");
+	    collect.forEach(System.out::println);
+	}
+	
+	
+	public static void MapPeekExample()
+	{
+		 List<Integer> list = new ArrayList<>();
+		    List<Integer> result = Stream.of(1, 2, 3, 4)
+		            .peek(x -> list.add(x))
+		            .map(x -> x * 2).peek(System.out::println)
+		            .collect(Collectors.toList());
+
+		    System.out.println(list);
+		    System.out.println(result);
+	}
+	
+	
+	public static void whenFindMax_thenGetMaxElementFromStream() {
+		
+		  Employee[] arrayOfEmps = {
+			        new Employee(1, "Jeff Bezos", 1.0), 
+			        new Employee(2, "Bill Gates", 2.0), 
+			        new Employee(3, "Mark Zuckerberg", 31.0),
+			        new Employee(4,"Austin Martin",44.0)
+			    };
+
+			    List<Employee> empList = Arrays.asList(arrayOfEmps);
+			    
+			    
+	    Employee maxSalEmp = empList.stream()
+	      .max(Comparator.comparing(Employee::getSalary))
+	      .orElseThrow(NoSuchElementException::new);
+	    
+	    System.out.println(maxSalEmp);
+	    
+	    
+	    Double sumSal = empList.stream()
+	    	      .map(Employee::getSalary)
+	    	      .reduce(5.0, Double::sum);
+	    
+	    System.out.println(sumSal);
+
+	}
+	
+	public static void whenApplyDistinct_thenRemoveDuplicatesFromStream() {
+	    List<Integer> intList = Arrays.asList(2, 5, 3, 2, 4, 3,1);
+	    System.out.println("descending order");
+	    List<Integer> distinctIntList = intList.stream().distinct().map(e-> e*-1).sorted().map(e-> e*-1).collect(Collectors.toList());
+	    distinctIntList.forEach(System.out::println);
+	    System.out.println("ascending order");
+	    List<Integer> distinctIntList1 = intList.stream().distinct().sorted().collect(Collectors.toList());
+	    distinctIntList1.forEach(System.out::println);
+	    
+	}
+	
+	public static void whenApplyMatch_thenReturnBoolean() {
+	    List<Integer> intList = Arrays.asList(2, 4, 5, 6, 8);
+	    
+	    boolean allEven = intList.stream().allMatch(i -> i % 2 == 0);
+	    // short circuit happens when failed to match the condition all other elements were ignored.
+	    boolean oneEven = intList.stream().anyMatch(i -> i % 2 == 0);
+	 // short circuit happens when any one element match the condition all other elements were ignored.
+	    boolean noneMultipleOfThree = intList.stream().noneMatch(i -> i % 3 == 0);
+	 // short circuit happens when any one element fails to match the condition all other elements were ignored.
+	    
+	    System.out.println(allEven);
+	    System.out.println(oneEven);
+	    System.out.println(noneMultipleOfThree);
+	}
+	
+	
+	public static void whenApplySummarizing_thenGetBasicStats() {
+		
+		 Employee[] arrayOfEmps = {
+			        new Employee(1, "Jeff Bezos", 1.0), 
+			        new Employee(2, "Bill Gates", 2.0), 
+			        new Employee(3, "Mark Zuckerberg", 31.0),
+			        new Employee(4,"Austin Martin",44.0)
+			    };
+
+			    List<Employee> empList = Arrays.asList(arrayOfEmps);
+			    
+	    DoubleSummaryStatistics stats = empList.stream()
+	      .collect(Collectors.summarizingDouble(Employee::getSalary));
+
+	    System.out.println("count"+stats.getCount());
+	    System.out.println("getSum"+stats.getSum());
+	    System.out.println("getMin"+stats.getMin());
+	    System.out.println("getMax"+stats.getMax());
+	    System.out.println("getAverage"+stats.getAverage());
+	}
+	
+	
+	public static  void whenApplySummaryStatistics_thenGetBasicStats() {
+		Employee[] arrayOfEmps = {
+		        new Employee(1, "Jeff Bezos", 1.0), 
+		        new Employee(2, "Bill Gates", 2.0), 
+		        new Employee(3, "Mark Zuckerberg", 31.0),
+		        new Employee(4,"Austin Martin",44.0)
+		    };
+
+		    List<Employee> empList = Arrays.asList(arrayOfEmps);
+		    
+	    DoubleSummaryStatistics stats = empList.stream()
+	      .mapToDouble(Employee::getSalary)
+	      .summaryStatistics();
+
+	    System.out.println("count	"+stats.getCount());
+	    System.out.println("getSum	"+stats.getSum());
+	    System.out.println("getMin	"+stats.getMin());
+	    System.out.println("getMax	"+stats.getMax());
+	    System.out.println("getAverage	"+stats.getAverage());
+	}
+	
+	
+	
+	public static void whenStreamPartition_thenGetMap() {
+	    List<Integer> intList = Arrays.asList(2, 4, 5, 6, 8);
+	    Map<Boolean, List<Integer>> isEven = intList.stream().collect(
+	      Collectors.partitioningBy(i -> i % 2 == 0));
+	    
+	    /*System.out.println(isEven.get(true).size());
+	    System.out.println(isEven.get(false).size());*/
+	    
+	    
+	    Employee[] arrayOfEmps = {
+		        new Employee(1, "Jeff Bezos", 1.0), 
+		        new Employee(2, "Bill Gates", 2.0), 
+		        new Employee(3, "Mark Zuckerberg", 31.0),
+		        new Employee(4,"Austin Martin",44.0)
+		    };
+
+		    List<Employee> empList = Arrays.asList(arrayOfEmps);
+		    
+		    
+	    Map<Character, List<Employee>> groupByAlphabet = empList.stream().collect(
+	    	      Collectors.groupingBy(e -> new Character(e.getName().charAt(0))));
+
+	    //groupByAlphabet.forEach((k,v)->System.out.println("alphabet : " + k + " Employee_name : " + v));
+	    
+	    
+	    Map<Character, List<Integer>> idGroupedByAlphabet = empList.stream().collect(
+	    	      Collectors.groupingBy(e -> new Character(e.getName().charAt(0)),
+	    	        Collectors.mapping(Employee::getId, Collectors.toList())));
+	    
+	    idGroupedByAlphabet.forEach((k,v)->System.out.println("alphabet : " + k + " Employee_ID : " + v));
+	    
+	    
+	}
+	
+	public static void whenStreamReducing_thenGetValue() {
+		Employee[] arrayOfEmps = {
+		        new Employee(1, "Jeff Bezos", 100000.0), 
+		        new Employee(2, "Bill Gates",  	200000.0), 
+		        new Employee(3, "Mark Zuckerberg",  300000.0),
+		        new Employee(4,"Austin Martin", 400000.0)
+		    };
+
+		    List<Employee> empList = Arrays.asList(arrayOfEmps);
+	    Double percentage = 10.0;
+	    Double salIncrOverhead = empList.stream().collect(Collectors.reducing(
+	        0.0, e -> e.getSalary() * percentage / 100, (s1, s2) -> s1 + s2));
+
+	    System.out.println(salIncrOverhead);
+	}
+	
+	public static void whenStreamGroupingAndReducing_thenGetMap() {
+		Employee[] arrayOfEmps = {
+		        new Employee(1, "Jeff Bezos", 100000.0), 
+		        new Employee(2, "Bill Gates",  	200000.0), 
+		        new Employee(3, "AarkZuckerberg ALALALAL",  300000.0),
+		        new Employee(4,"Austin Martin", 400000.0)
+		    };
+
+		    List<Employee> empList = Arrays.asList(arrayOfEmps);
+		    
+		    
+	    Comparator<Employee> byNameLength = Comparator.comparing(Employee::getName);
+	    
+	    System.out.println();
+	    
+	    Map<Character, Optional<Employee>> longestNameByAlphabet = empList.stream().collect(
+	      Collectors.groupingBy(e -> new Character(e.getName().charAt(0)),
+	        Collectors.reducing(BinaryOperator.maxBy(byNameLength))));
+	    
+	    longestNameByAlphabet.forEach((k,v) -> System.out.println("Key value :"+k +"  value is : " +v));
+	    
+	}
+	
+	
+	public static void whenGenerateStream_thenGetInfiniteStream() {
+	    Stream.generate(Math::random)
+	      .limit(5)
+	      .forEach(System.out::println);
+	}
+	
+	
+	public static void whenIterateStream_thenGetInfiniteStream() {
+	    Stream<Integer> evenNumStream = Stream.iterate(2, i -> i * 2);
+
+	    List<Integer> collect = evenNumStream.skip(3)
+	      .limit(5)
+	      .collect(Collectors.toList());
+	    
+	    collect.forEach(System.out::println);
+	    
+	    
+	   
+	    
+	}
+	
+}
